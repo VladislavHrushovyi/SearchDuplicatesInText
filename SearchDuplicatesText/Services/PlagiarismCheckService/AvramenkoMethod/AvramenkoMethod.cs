@@ -1,3 +1,4 @@
+using System.Text;
 using SearchDuplicatesText.Models;
 
 namespace SearchDuplicatesText.Services.PlagiarismCheckService.AvramenkoMethod;
@@ -8,7 +9,12 @@ public class AvramenkoMethod : IPlagiarismMethod
     {
         return await Task.Run(() => new List<MethodResult>()
         {
-            new MethodResult(){nameFile = "Avramenko", percent = 100}
+            new MethodResult(){nameFile = dataForMethod[0], percent = 100}
         });
+    }
+
+    public Task<List<string>> GetPreparedData(StringBuilder text)
+    {
+        throw new NotImplementedException();
     }
 }

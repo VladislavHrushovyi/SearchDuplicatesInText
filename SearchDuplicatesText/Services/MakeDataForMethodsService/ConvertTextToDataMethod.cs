@@ -15,33 +15,49 @@ public class ConvertTextToDataMethod
         _fileRepository = fileRepository;
     }
 
-    public async Task<List<string>> GetShinglesHash(StringBuilder text, int numberOfShingles = 3)
+    public async Task<List<string>> GetShinglesHash(StringBuilder text)
     {
         return await CreateShingleHashes(text);
     }
 
-    public async Task CreateShingleFile(StringBuilder text,  string? fileName, int numberOfShingle = 3)
+    public async Task<List<string>> GetNgrams(StringBuilder text)
+    {
+        return await CreateNgrams(text);
+    }
+
+    public async Task CreateShingleFile(StringBuilder text,  string? fileName)
     {
         await CreateShingleHashes(text);
         await File.WriteAllLinesAsync($"./Files/ShingleHashFile/{fileName}", _hashesShingle.Select(x => x.ToString()));
         await _fileRepository.AddShingleFile(new ShingleFile() {Name = fileName, ShingleCount = _hashesShingle.Count});
     }
 
-    public async Task CreateNgramFile(StringBuilder text, string? fileName, int ngramCount = 10)
+    public async Task CreateNgramFile(StringBuilder text, string? fileName)
     {
-        text.Replace(" ", "");
-        var ngram = new StringBuilder();
-        for (int i = 0; i < text.Length - ngramCount; i+=ngramCount)
-        {
-            for (int j = i; j < i + ngramCount; j++)
-            {
-                ngram.Append(text[j]);
-            }
-            _ngrams.Add(ngram.ToString());
-            ngram.Clear();
-        }
+        await CreateNgrams(text);
         await File.WriteAllLinesAsync($"./Files/NgramFiles/{fileName}", _ngrams.Select(x => x.ToString()));
         await _fileRepository.AddNgramFile(new NgramFile() {Name = fileName, NumberOfNgram = _ngrams.Count});
+    }
+
+    private async Task<List<string>> CreateNgrams(StringBuilder text, int ngramCount = 20)
+    {
+        return await Task.Run(() =>
+        {
+            text.Replace(" ", "");
+            var ngram = new StringBuilder();
+            for (int i = 0; i < text.Length - ngramCount; i++)
+            {
+                for (int j = i; j < i + ngramCount; j++)
+                {
+                    ngram.Append(text[j]);
+                }
+
+                _ngrams.Add(ngram.ToString());
+                ngram.Clear();
+            }
+
+            return _ngrams;
+        });
     }
 
     private async Task<List<string>> CreateShingleHashes(StringBuilder text, int numberOfShingle = 3)

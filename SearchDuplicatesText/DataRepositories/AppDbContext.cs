@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using SearchDuplicatesText.Models;
 using SearchDuplicatesText.Models.DataBase;
 
 namespace SearchDuplicatesText.DataRepositories;

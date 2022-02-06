@@ -24,21 +24,21 @@ public class CheckDuplicateController : ControllerBase
     }
 
     [HttpPost("shingle-check")]
-    public async Task<IResult> ChingleCheck(IFormFile file)
+    public async Task<IResult> ShingleCheck(IFormFile file)
     {
-        var result = await _plagiarismCheck.CheckPlagiarismByShingle(file, _shingleMethod);
+        var result = await _plagiarismCheck.CheckPlagiarism(file, _shingleMethod);
         return Results.Ok(result);
     }
     [HttpPost("ngram-check")]
     public async Task<IResult> NgramCheck(IFormFile file)
     {
-        var result = await _plagiarismCheck.CheckPlagiarismByShingle(file, _ngramMethod);
+        var result = await _plagiarismCheck.CheckPlagiarism(file, _ngramMethod);
         return Results.Ok(result);
     }
     [HttpPost("avramenko-check")]
     public async Task<IResult> AvramenkoCheck(IFormFile file)
     {
-        var result = await _plagiarismCheck.CheckPlagiarismByShingle(file, _avramenkoMethod);
+        var result = await _plagiarismCheck.CheckPlagiarism(file, _avramenkoMethod);
         return Results.Ok(result);
     }
 }

@@ -2,10 +2,10 @@ namespace SearchDuplicatesText.DataRepositories;
 
 public abstract class BaseRepository
 {
-    protected AppDbContext dbContext;
+    protected readonly AppDbContext DbContext;
 
     protected BaseRepository(AppDbContext dbContext)
     {
-        this.dbContext = dbContext;
+        this.DbContext = dbContext;
     }
 }
