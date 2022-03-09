@@ -34,8 +34,8 @@ public class NgramMethod : IPlagiarismMethod
                 var percent = Convert.ToDouble(ngramMatch1 + ngramMatch2) / Convert.ToDouble(dataForMethod.Count + file.NumberOfNgram);
                 var methodResult = new MethodResult()
                 {
-                    nameFile = file.Name,
-                    percent = percent * 100
+                    NameFile = file.Name,
+                    Percent = percent * 100
                 };
                 result.Add(methodResult, token);
             });

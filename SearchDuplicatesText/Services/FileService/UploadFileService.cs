@@ -18,13 +18,14 @@ public class UploadFileService
         var fileReader = await _fileHandler.GetFileReader(file);
         var filterTextResult = await _fileHandler.GetNewFileData(fileReader);
         var fileName = await _fileHandler.SaveFile(fileReader, filterTextResult);
-        
+
         await _convertText.CreateShingleFile(filterTextResult, fileName);
         await _convertText.CreateNgramFile(filterTextResult, fileName);
-        
+
         return Results.Ok(new
         {
             name = fileName
         });
     }
+    
 }

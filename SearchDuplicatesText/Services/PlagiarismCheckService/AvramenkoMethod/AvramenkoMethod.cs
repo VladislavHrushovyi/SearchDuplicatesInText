@@ -9,7 +9,7 @@ public class AvramenkoMethod : IPlagiarismMethod
     {
         return await Task.Run(() => new List<MethodResult>()
         {
-            new MethodResult(){nameFile = dataForMethod[0], percent = 100}
+            new MethodResult(){NameFile = dataForMethod[0], Percent = 100}
         });
     }
 

@@ -30,6 +30,7 @@ public class ConvertTextToDataMethod
         await CreateShingleHashes(text);
         await File.WriteAllLinesAsync($"./Files/ShingleHashFile/{fileName}", _hashesShingle.Select(x => x.ToString()));
         await _fileRepository.AddShingleFile(new ShingleFile() {Name = fileName, ShingleCount = _hashesShingle.Count});
+        _hashesShingle.Clear();
     }
 
     public async Task CreateNgramFile(StringBuilder text, string? fileName)
@@ -37,6 +38,7 @@ public class ConvertTextToDataMethod
         await CreateNgrams(text);
         await File.WriteAllLinesAsync($"./Files/NgramFiles/{fileName}", _ngrams.Select(x => x.ToString()));
         await _fileRepository.AddNgramFile(new NgramFile() {Name = fileName, NumberOfNgram = _ngrams.Count});
+        _ngrams.Clear();
     }
 
     private async Task<List<string>> CreateNgrams(StringBuilder text, int ngramCount = 20)

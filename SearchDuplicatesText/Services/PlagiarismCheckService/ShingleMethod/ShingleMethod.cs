@@ -30,8 +30,8 @@ public class ShingleMethod : IPlagiarismMethod
             var commonShingleCount = dataForMethod.Intersect(compareFile).Count();
             var methodResult = new MethodResult()
             {
-                nameFile = file.Name,
-                percent = commonShingleCount == 0
+                NameFile = file.Name,
+                Percent = commonShingleCount == 0
                     ? 0
                     : (Convert.ToDouble(commonShingleCount) / Convert.ToDouble(compareFile.Length)) * 100
         
