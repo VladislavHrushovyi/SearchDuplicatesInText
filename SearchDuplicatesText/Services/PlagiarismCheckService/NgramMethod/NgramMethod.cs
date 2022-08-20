@@ -42,8 +42,7 @@ public class NgramMethod : IPlagiarismMethod
         watch.Stop();
         var ts = watch.Elapsed;
 
-        var elapsedTime = $"{ts.Hours:00}:{ts.Minutes:00}:{ts.Seconds:00}.{ts.Milliseconds / 10:00}";
-        Console.WriteLine("RunTime " + elapsedTime);
+        Console.WriteLine("RunTime " + ts);
         return result.ToList();
     }
 
