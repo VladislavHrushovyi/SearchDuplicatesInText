@@ -48,6 +48,7 @@ public class ShingleMethod : IPlagiarismMethod
 
     public async Task<List<string>> GetPreparedData(StringBuilder text)
     {
-        return await _convertText.GetShinglesHash(text);
+        throw new NotImplementedException();
+        //return await _convertText.GetShinglesHash(text);
     }
 }

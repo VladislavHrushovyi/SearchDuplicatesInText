@@ -49,6 +49,7 @@ public class NgramMethod : IPlagiarismMethod
 
     public async Task<List<string>> GetPreparedData(StringBuilder text)
     {
-        return await _convertText.GetNgrams(text);
+        throw new NotImplementedException();
+        //return await _convertText.GetNgrams(text);
     }
 }

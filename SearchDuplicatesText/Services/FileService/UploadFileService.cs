@@ -1,3 +1,5 @@
+using System.Diagnostics;
+using SearchDuplicatesText.Models;
 using SearchDuplicatesText.Services.MakeDataForMethodsService;
 
 namespace SearchDuplicatesText.Services.FileService;
@@ -15,17 +17,19 @@ public class UploadFileService
 
     public async Task<IResult> SaveUploadFile(IFormFile file)
     {
+        var watch = new Stopwatch();
+        watch.Start();
         var fileReader = await _fileHandler.GetFileReader(file);
         var filterTextResult = await _fileHandler.GetNewFileData(fileReader);
         var fileName = await _fileHandler.SaveFile(fileReader, filterTextResult);
 
-        await _convertText.CreateShingleFile(filterTextResult, fileName);
-        await _convertText.CreateNgramFile(filterTextResult, fileName);
+        var shingle = await _convertText.CreateShingleFile(filterTextResult, fileName);
+        var ngrams =  await _convertText.CreateNgramFile(filterTextResult, fileName);
+        
+        watch.Stop();
+        Console.WriteLine($"Create {fileName} on {watch.Elapsed}");
 
-        return Results.Ok(new
-        {
-            name = fileName
-        });
+        return Results.Ok(new FileResponse(ngrams, shingle));
     }
     
 }

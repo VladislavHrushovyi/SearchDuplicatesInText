@@ -36,7 +36,7 @@ public class FileRepository : BaseRepository
         return ngramFileEntity.Entity;
     }
 
-    public async Task<DeleteResponse> Delete(string nameFile)
+    public async Task<FileResponse> Delete(string nameFile)
     {
         var ngramFileEntity = DbContext.NgramFiles.Where(f => f.Name == nameFile).FirstAsync();
         var shingleFileEntity = DbContext.SingleFiles.Where(f => f.Name == nameFile).FirstAsync();
@@ -45,7 +45,7 @@ public class FileRepository : BaseRepository
         var shingleRemoved = DbContext.SingleFiles.Remove(shingleFileEntity.GetAwaiter().GetResult());
         await DbContext.SaveChangesAsync();
         
-        return new DeleteResponse(ngramsRemoved.Entity, shingleRemoved.Entity);
+        return new FileResponse(ngramsRemoved.Entity, shingleRemoved.Entity);
     }
     
 }
