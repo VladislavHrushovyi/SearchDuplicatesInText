@@ -20,4 +20,10 @@ public class TextController
         var result = await _uploadFileService.SaveUploadFile(text);
         return result;
     }
+
+    [HttpDelete("delete/{id}")]
+    public async Task<IResult> DeleteText([FromQuery] string name)
+    {
+        return null;
+    }
 }

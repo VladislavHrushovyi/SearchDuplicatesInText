@@ -25,20 +25,24 @@ public class ConvertTextToDataMethod
         return await CreateNgrams(text);
     }
 
-    public async Task CreateShingleFile(StringBuilder text,  string? fileName)
+    public async Task<ShingleFile> CreateShingleFile(StringBuilder text, string? fileName)
     {
         await CreateShingleHashes(text);
         await File.WriteAllLinesAsync($"./Files/ShingleHashFile/{fileName}", _hashesShingle.Select(x => x.ToString()));
-        await _fileRepository.AddShingleFile(new ShingleFile() {Name = fileName, ShingleCount = _hashesShingle.Count});
+        var result = await _fileRepository.AddShingleFile(new ShingleFile() {Name = fileName, ShingleCount = _hashesShingle.Count});
         _hashesShingle.Clear();
+        
+        return result;
     }
 
-    public async Task CreateNgramFile(StringBuilder text, string? fileName)
+    public async Task<NgramFile> CreateNgramFile(StringBuilder text, string? fileName)
     {
         await CreateNgrams(text);
         await File.WriteAllLinesAsync($"./Files/NgramFiles/{fileName}", _ngrams.Select(x => x.ToString()));
-        await _fileRepository.AddNgramFile(new NgramFile() {Name = fileName, NumberOfNgram = _ngrams.Count});
+        var result = await _fileRepository.AddNgramFile(new NgramFile() {Name = fileName, NumberOfNgram = _ngrams.Count});
         _ngrams.Clear();
+
+        return result;
     }
 
     private async Task<List<string>> CreateNgrams(StringBuilder text, int ngramCount = 20)
@@ -64,19 +68,16 @@ public class ConvertTextToDataMethod
 
     private async Task<List<string>> CreateShingleHashes(StringBuilder text, int numberOfShingle = 3)
     {
-        return await Task.Run(async () =>
+        _hashesShingle.Clear();
+        var shingle = new StringBuilder();
+        var splitText = text.ToString().Split(" ");
+        for (int i = 0; i < (splitText.Length - numberOfShingle); i++)
         {
-            _hashesShingle.Clear();
-            var shingle = new StringBuilder();
-            var splitText = text.ToString().Split(" ");
-            for (int i = 0; i < (splitText.Length - numberOfShingle); i++)
-            {
-                shingle.Append(splitText[i]).Append(splitText[i + 1]).Append(splitText[i + 2]);
-                _hashesShingle.Add(await shingle.ToString().StringToSha1());
-                shingle.Clear();
-            }
+            shingle.Append(splitText[i]).Append(splitText[i + 1]).Append(splitText[i + 2]);
+            _hashesShingle.Add(await shingle.ToString().StringToSha1());
+            shingle.Clear();
+        }
 
-            return _hashesShingle;
-        });
+        return _hashesShingle;
     }
 }
