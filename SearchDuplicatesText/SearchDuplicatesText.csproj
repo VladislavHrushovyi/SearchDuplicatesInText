@@ -22,6 +22,7 @@
 
     <ItemGroup>
       <Folder Include="Files\NgramFiles" />
+      <Folder Include="Files\NgramFiles" />
       <Folder Include="Files\ShingleHashFile" />
     </ItemGroup>
 

@@ -1,3 +1,4 @@
+using System.Collections.ObjectModel;
 using System.Text;
 using SearchDuplicatesText.Models;
 
@@ -5,7 +6,7 @@ namespace SearchDuplicatesText.Services.PlagiarismCheckService.AvramenkoMethod;
 
 public class AvramenkoMethod : IPlagiarismMethod
 {
-    public async Task<List<MethodResult>> StartMethod(List<string> dataForMethod)
+    public async Task<List<MethodResult>> StartMethod(ReadOnlyCollection<string> dataForMethod)
     {
         return await Task.Run(() => new List<MethodResult>()
         {
@@ -13,7 +14,7 @@ public class AvramenkoMethod : IPlagiarismMethod
         });
     }
 
-    public Task<List<string>> GetPreparedData(StringBuilder text)
+    public Task<ReadOnlyCollection<string>> GetPreparedData(StringBuilder text)
     {
         throw new NotImplementedException();
     }
