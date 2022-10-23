@@ -21,7 +21,27 @@ namespace SearchDuplicatesText.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("SearchDuplicatesText.Models.NgramFile", b =>
+            modelBuilder.Entity("SearchDuplicatesText.Models.DataBase.ExpFile", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("NumberOfPart")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ExpFiles");
+                });
+
+            modelBuilder.Entity("SearchDuplicatesText.Models.DataBase.NgramFile", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -40,7 +60,7 @@ namespace SearchDuplicatesText.Migrations
                     b.ToTable("NgramFiles");
                 });
 
-            modelBuilder.Entity("SearchDuplicatesText.Models.ShingleFile", b =>
+            modelBuilder.Entity("SearchDuplicatesText.Models.DataBase.ShingleFile", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()

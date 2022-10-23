@@ -1,27 +1,21 @@
 import { useState } from "react"
 
-export const useUpload = (name, list) => {
-    const [file, setFile] = useState(list);
-
+export const useUpload = (name, init) => {
+    const [file, setFile] = useState(init);
     return {
         name: name,
         customRequest: ({ file, onSuccess }) => {
             onSuccess("ok")
         },
         onChange: (response) => {
-            setFile([response.file])
-            console.log(response)
+            if(response.status !== "removed"){
+                setFile([response.file])
+            }
+            if(response.file.status === "removed"){
+                response.file = {}
+                setFile([])
+            }
         },
-        beforeUpload: file => {
-            const reader = new FileReader();
-    
-            reader.onload = e => {
-                console.log(e.target.result);
-            };
-            reader.readAsText(file);
-            
-            return false;
-        },
-        fileList: file,        
+        fileList: file,
     }
 }

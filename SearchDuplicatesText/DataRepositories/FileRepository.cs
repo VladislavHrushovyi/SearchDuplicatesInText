@@ -10,33 +10,47 @@ public class FileRepository : BaseRepository
     {
     }
 
-    public async Task<ShingleFile> AddShingleFile(ShingleFile shingleFile)
+    public async Task<T> AddFile<T>(T file) where T : BaseModel
     {
-        var shingleFileEntity = await DbContext.SingleFiles.AddAsync(shingleFile);
+        var newFile = await DbContext.Set<T>().AddAsync(file);
         await DbContext.SaveChangesAsync();
 
-        return shingleFileEntity.Entity;
+        return newFile.Entity;
     }
 
-    public async Task<List<ShingleFile>> GetAllShingleFile()
+    public async Task<IEnumerable<T>> GetFiles<T>() where T : BaseModel
     {
-        return await DbContext.SingleFiles.ToListAsync();
-    }
+        var files = DbContext.Set<T>();
 
-    public async Task<List<NgramFile>> GetAllNgramFiles()
-    {
-        return await DbContext.NgramFiles.ToListAsync();
+        return await files.ToListAsync();
     }
+    // public async Task<ShingleFile> AddShingleFile(ShingleFile shingleFile)
+    // {
+    //     var shingleFileEntity = await DbContext.SingleFiles.AddAsync(shingleFile);
+    //     await DbContext.SaveChangesAsync();
+    //
+    //     return shingleFileEntity.Entity;
+    // }
+    //
+    // public async Task<List<ShingleFile>> GetAllShingleFile()
+    // {
+    //     return await DbContext.SingleFiles.ToListAsync();
+    // }
+    //
+    // public async Task<List<NgramFile>> GetAllNgramFiles()
+    // {
+    //     return await DbContext.NgramFiles.ToListAsync();
+    // }
+    //
+    // public async Task<NgramFile> AddNgramFile(NgramFile ngramFile)
+    // {
+    //     var ngramFileEntity = await DbContext.NgramFiles.AddAsync(ngramFile);
+    //     await DbContext.SaveChangesAsync();
+    //     
+    //     return ngramFileEntity.Entity;
+    // }
 
-    public async Task<NgramFile> AddNgramFile(NgramFile ngramFile)
-    {
-        var ngramFileEntity = await DbContext.NgramFiles.AddAsync(ngramFile);
-        await DbContext.SaveChangesAsync();
-        
-        return ngramFileEntity.Entity;
-    }
-
-    public async Task<DeleteResponse> Delete(string nameFile)
+    public async Task<FileResponse> Delete(string nameFile)
     {
         var ngramFileEntity = DbContext.NgramFiles.Where(f => f.Name == nameFile).FirstAsync();
         var shingleFileEntity = DbContext.SingleFiles.Where(f => f.Name == nameFile).FirstAsync();
@@ -45,7 +59,7 @@ public class FileRepository : BaseRepository
         var shingleRemoved = DbContext.SingleFiles.Remove(shingleFileEntity.GetAwaiter().GetResult());
         await DbContext.SaveChangesAsync();
         
-        return new DeleteResponse(ngramsRemoved.Entity, shingleRemoved.Entity);
+        return new FileResponse(ngramsRemoved.Entity, shingleRemoved.Entity, new ExpFile()); // є заглушка
     }
     
 }

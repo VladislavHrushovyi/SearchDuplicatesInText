@@ -1,3 +1,4 @@
+using System.Collections.ObjectModel;
 using System.Text;
 using SearchDuplicatesText.DataRepositories;
 using SearchDuplicatesText.Models.DataBase;
@@ -7,77 +8,125 @@ namespace SearchDuplicatesText.Services.MakeDataForMethodsService;
 public class ConvertTextToDataMethod
 {
     private readonly FileRepository _fileRepository;
-    private readonly List<string> _hashesShingle = new();
-    private readonly List<string> _ngrams = new();
 
     public ConvertTextToDataMethod(FileRepository fileRepository)
     {
         _fileRepository = fileRepository;
     }
 
-    public async Task<List<string>> GetShinglesHash(StringBuilder text)
+    public async Task<ReadOnlyCollection<string>> GetShinglesHash(StringBuilder text)
     {
-        return await CreateShingleHashes(text);
+        List<string> hashesFromUserFile = new();
+        await foreach (var line in CreateShingleHashes(text))
+        {
+            hashesFromUserFile.Add(line);
+        }
+
+        return hashesFromUserFile.AsReadOnly();
+    }
+    
+    public async Task<ReadOnlyCollection<string>> GetNgrams(StringBuilder text)
+    {
+        List<string> ngramsFromUserFile = new();
+        await foreach (var line in CreateNgrams(text))
+        {
+            ngramsFromUserFile.Add(line);
+        }
+
+        return ngramsFromUserFile.AsReadOnly();
     }
 
-    public async Task<List<string>> GetNgrams(StringBuilder text)
+    public async Task<ReadOnlyCollection<string>> GetExps(StringBuilder text)
     {
-        return await CreateNgrams(text);
+        List<string> exps = new ();
+        await foreach (var exp in CreateExpItems(text))
+        {
+            exps.Add(exp);
+        }
+
+        return exps.AsReadOnly();
     }
 
     public async Task<ShingleFile> CreateShingleFile(StringBuilder text, string? fileName)
     {
-        await CreateShingleHashes(text);
-        await File.WriteAllLinesAsync($"./Files/ShingleHashFile/{fileName}", _hashesShingle.Select(x => x.ToString()));
-        var result = await _fileRepository.AddShingleFile(new ShingleFile() {Name = fileName, ShingleCount = _hashesShingle.Count});
-        _hashesShingle.Clear();
-        
+        int shingleCount = 0;
+        using (var streamWriter = new StreamWriter($"./Files/ShingleHashFile/{fileName}", true))
+        {
+            await foreach (var shingle in CreateShingleHashes(text).ConfigureAwait(false))
+            {
+                await streamWriter.WriteLineAsync(shingle);
+                shingleCount++;
+            }
+        }
+
+        var result =
+            await _fileRepository.AddFile(new ShingleFile() {Name = fileName, ShingleCount = shingleCount});
+
         return result;
     }
 
     public async Task<NgramFile> CreateNgramFile(StringBuilder text, string? fileName)
     {
-        await CreateNgrams(text);
-        await File.WriteAllLinesAsync($"./Files/NgramFiles/{fileName}", _ngrams.Select(x => x.ToString()));
-        var result = await _fileRepository.AddNgramFile(new NgramFile() {Name = fileName, NumberOfNgram = _ngrams.Count});
-        _ngrams.Clear();
+        int ngramCount = 0;
+        await using (var streamWriter = new StreamWriter($"./Files/NgramFiles/{fileName}", true))
+        {
+            await foreach (var ngram in CreateNgrams(text))
+            {
+                await streamWriter.WriteLineAsync(ngram);
+                ngramCount++;
+            }
+        }
+
+        var result = await _fileRepository.AddFile(new NgramFile() {Name = fileName, NumberOfNgram = ngramCount});
 
         return result;
     }
 
-    private async Task<List<string>> CreateNgrams(StringBuilder text, int ngramCount = 20)
+    public async Task<ExpFile> CreateExpFile(StringBuilder text, string? fileName)
     {
-        return await Task.Run(() =>
+        int expCount = 0;
+
+        await using var streamWriter = new StreamWriter($"./Files/ExpFiles/{fileName}", true);
+        await foreach (var word in CreateExpItems(text))
         {
-            text.Replace(" ", "");
-            var ngram = new StringBuilder();
-            for (int i = 0; i < text.Length - ngramCount; i++)
-            {
-                for (int j = i; j < i + ngramCount; j++)
-                {
-                    ngram.Append(text[j]);
-                }
+            await streamWriter.WriteLineAsync(word);
+            expCount++;
+        }
 
-                _ngrams.Add(ngram.ToString());
-                ngram.Clear();
-            }
+        var result = await _fileRepository.AddFile(new ExpFile() {Name = fileName, NumberOfPart = expCount});
 
-            return _ngrams;
-        });
+        return result;
     }
 
-    private async Task<List<string>> CreateShingleHashes(StringBuilder text, int numberOfShingle = 3)
+    private async IAsyncEnumerable<string> CreateNgrams(StringBuilder text, int ngramCount = 20)
     {
-        _hashesShingle.Clear();
-        var shingle = new StringBuilder();
+        text.Replace(" ", "");
+        
+        for (int i = 0; i < text.Length - ngramCount; i++)
+        {
+            yield return text.ToString(i, ngramCount);
+        }
+    }
+
+    private async IAsyncEnumerable<string> CreateShingleHashes(StringBuilder text, int numberOfShingle = 3)
+    {
         var splitText = text.ToString().Split(" ");
         for (int i = 0; i < (splitText.Length - numberOfShingle); i++)
         {
-            shingle.Append(splitText[i]).Append(splitText[i + 1]).Append(splitText[i + 2]);
-            _hashesShingle.Add(await shingle.ToString().StringToSha1());
-            shingle.Clear();
+            var shingleText = splitText.Skip(i).Take(numberOfShingle);
+            yield return await string.Join("", shingleText).StringToSha1();
         }
+    }
 
-        return _hashesShingle;
+    private async IAsyncEnumerable<string> CreateExpItems(StringBuilder text)
+    {
+        var words = text.ToString().Split(" ");
+        foreach (var word in words)
+        {
+            if (word != "")
+            {
+                yield return  word[0] + "" + word[word.Length - 1];
+            }
+        }
     }
 }
