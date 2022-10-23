@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Text;
 using SearchDuplicatesText.DataRepositories;
 using SearchDuplicatesText.Models;
+using SearchDuplicatesText.Models.DataBase;
 using SearchDuplicatesText.Services.MakeDataForMethodsService;
 
 namespace SearchDuplicatesText.Services.PlagiarismCheckService.NgramMethod;
@@ -21,7 +22,7 @@ public class NgramMethod : IPlagiarismMethod
 
     public async Task<List<MethodResult>> StartMethod(ReadOnlyCollection<string> dataForMethod)
     {
-        var ngramFiles = await _fileRepository.GetAllNgramFiles();
+        var ngramFiles = await _fileRepository.GetFiles<NgramFile>();
         using var result = new BlockingCollection<MethodResult>();
         var watch = new Stopwatch();
         watch.Start();
@@ -43,14 +44,10 @@ public class NgramMethod : IPlagiarismMethod
         watch.Stop();
         var ts = watch.Elapsed;
 
-        var elapsedTime = $"{ts.Hours:00}:{ts.Minutes:00}:{ts.Seconds:00}.{ts.Milliseconds / 10:00}";
-        Console.WriteLine("RunTime " + elapsedTime);
+        Console.WriteLine("RunTime " + ts);
         return result.ToList();
     }
 
-    public async Task<ReadOnlyCollection<string>> GetPreparedData(StringBuilder text)
-    {
-        throw new NotImplementedException();
-        //return await _convertText.GetNgrams(text);
-    }
+    public async Task<ReadOnlyCollection<string>> GetPreparedData(StringBuilder text) => await _convertText.GetNgrams(text);
+    
 }

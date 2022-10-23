@@ -35,7 +35,11 @@ public class FileHandler
 
         foreach (var s in textFromUpload!.Split(" "))
         {
-            if (!await _wordNormalizer.IsWrongWord(s))
+            // if (s == " ")
+            // {
+            //     continue;
+            // }
+            if (!await _wordNormalizer.IsWrongWord(s) && s != " ")
             {
                 filteredText.Append(s + " ");
             }
@@ -43,11 +47,35 @@ public class FileHandler
 
         return filteredText;
     }
-
-    public async Task<string> SaveFile(IFileReader fileReader, StringBuilder filterTextResult)
+    
+    public async Task<string> CreateFile(IFileReader fileReader, StringBuilder filterTextResult)
     {
         var fileName = await fileReader.CreateFileName();
         await File.WriteAllTextAsync($"./Files/{fileName}", filterTextResult.ToString());
         return fileName;
+    }
+
+    public async Task<string> CreateFile(string text)
+    {
+        var fileName = Guid.NewGuid() + ".txt";
+        await File.WriteAllTextAsync($"./Files/{fileName}", text);
+
+        return fileName;
+    }
+
+    public async Task<StringBuilder> ClearText(StringBuilder text)
+    {
+        var clearText = new StringBuilder();
+        var textFromUpload = await _textClearing.ClearTextAsync(text);
+        
+        foreach (var s in textFromUpload!.Split(" "))
+        {
+            if (!await _wordNormalizer.IsWrongWord(s) && s != " ")
+            {
+                clearText.Append(s + " ");
+            }
+        }
+
+        return clearText;
     }
 }

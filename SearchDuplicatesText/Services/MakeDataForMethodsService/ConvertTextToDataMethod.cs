@@ -36,6 +36,17 @@ public class ConvertTextToDataMethod
         return ngramsFromUserFile.AsReadOnly();
     }
 
+    public async Task<ReadOnlyCollection<string>> GetExps(StringBuilder text)
+    {
+        List<string> exps = new ();
+        await foreach (var exp in CreateExpItems(text))
+        {
+            exps.Add(exp);
+        }
+
+        return exps.AsReadOnly();
+    }
+
     public async Task<ShingleFile> CreateShingleFile(StringBuilder text, string? fileName)
     {
         int shingleCount = 0;
@@ -49,7 +60,7 @@ public class ConvertTextToDataMethod
         }
 
         var result =
-            await _fileRepository.AddShingleFile(new ShingleFile() {Name = fileName, ShingleCount = shingleCount});
+            await _fileRepository.AddFile(new ShingleFile() {Name = fileName, ShingleCount = shingleCount});
 
         return result;
     }
@@ -57,7 +68,7 @@ public class ConvertTextToDataMethod
     public async Task<NgramFile> CreateNgramFile(StringBuilder text, string? fileName)
     {
         int ngramCount = 0;
-        using (var streamWriter = new StreamWriter($"./Files/NgramFiles/{fileName}", true))
+        await using (var streamWriter = new StreamWriter($"./Files/NgramFiles/{fileName}", true))
         {
             await foreach (var ngram in CreateNgrams(text))
             {
@@ -66,7 +77,23 @@ public class ConvertTextToDataMethod
             }
         }
 
-        var result = await _fileRepository.AddNgramFile(new NgramFile() {Name = fileName, NumberOfNgram = ngramCount});
+        var result = await _fileRepository.AddFile(new NgramFile() {Name = fileName, NumberOfNgram = ngramCount});
+
+        return result;
+    }
+
+    public async Task<ExpFile> CreateExpFile(StringBuilder text, string? fileName)
+    {
+        int expCount = 0;
+
+        await using var streamWriter = new StreamWriter($"./Files/ExpFiles/{fileName}", true);
+        await foreach (var word in CreateExpItems(text))
+        {
+            await streamWriter.WriteLineAsync(word);
+            expCount++;
+        }
+
+        var result = await _fileRepository.AddFile(new ExpFile() {Name = fileName, NumberOfPart = expCount});
 
         return result;
     }
@@ -88,6 +115,18 @@ public class ConvertTextToDataMethod
         {
             var shingleText = splitText.Skip(i).Take(numberOfShingle);
             yield return await string.Join("", shingleText).StringToSha1();
+        }
+    }
+
+    private async IAsyncEnumerable<string> CreateExpItems(StringBuilder text)
+    {
+        var words = text.ToString().Split(" ");
+        foreach (var word in words)
+        {
+            if (word != "")
+            {
+                yield return  word[0] + "" + word[word.Length - 1];
+            }
         }
     }
 }

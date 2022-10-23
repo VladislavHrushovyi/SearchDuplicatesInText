@@ -2,7 +2,7 @@ using SearchDuplicatesText.DataRepositories;
 using SearchDuplicatesText.Services.FileService;
 using SearchDuplicatesText.Services.MakeDataForMethodsService;
 using SearchDuplicatesText.Services.PlagiarismCheckService;
-using SearchDuplicatesText.Services.PlagiarismCheckService.AvramenkoMethod;
+using SearchDuplicatesText.Services.PlagiarismCheckService.ExpMethod;
 using SearchDuplicatesText.Services.PlagiarismCheckService.NgramMethod;
 using SearchDuplicatesText.Services.PlagiarismCheckService.ShingleMethod;
 
@@ -21,7 +21,7 @@ public static class ServiceProviderExtension
         services.AddScoped<PlagiarismCheckService>();
         services.AddScoped<ShingleMethod>();
         services.AddScoped<NgramMethod>();
-        services.AddScoped<AvramenkoMethod>();
+        services.AddScoped<ExpMethod>();
         services.AddControllers();
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();

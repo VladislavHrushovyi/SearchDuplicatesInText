@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Text;
 using SearchDuplicatesText.Models;
 using SearchDuplicatesText.Services.MakeDataForMethodsService;
 
@@ -21,15 +22,28 @@ public class UploadFileService
         watch.Start();
         var fileReader = await _fileHandler.GetFileReader(file);
         var filterTextResult = await _fileHandler.GetNewFileData(fileReader);
-        var fileName = await _fileHandler.SaveFile(fileReader, filterTextResult);
+        var fileName = await _fileHandler.CreateFile(fileReader, filterTextResult);
 
         var shingle = await _convertText.CreateShingleFile(filterTextResult, fileName);
+        var exp = await _convertText.CreateExpFile(filterTextResult, fileName);
         var ngrams =  await _convertText.CreateNgramFile(filterTextResult, fileName);
         
         watch.Stop();
         Console.WriteLine($"Create {fileName} on {watch.Elapsed}");
 
-        return Results.Ok(new FileResponse(ngrams, shingle));
+        return Results.Ok(new FileResponse(ngrams, shingle, exp));
     }
-    
+
+    public async Task<IResult> SaveUploadText(string text)
+    {
+        StringBuilder upText = new StringBuilder().Append(text);
+        var filteredText = await _fileHandler.ClearText(upText);
+        var fileName = await _fileHandler.CreateFile(filteredText.ToString());
+        
+        var shingle = await _convertText.CreateShingleFile(filteredText, fileName);
+        var exp = await _convertText.CreateExpFile(filteredText, fileName);
+        var ngrams =  await _convertText.CreateNgramFile(filteredText, fileName);
+
+        return Results.Ok(new FileResponse(ngrams, shingle, exp));
+    }
 }

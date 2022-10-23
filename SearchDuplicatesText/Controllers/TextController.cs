@@ -14,10 +14,18 @@ public class TextController
         _uploadFileService = uploadFileService;
     }
 
-    [HttpPost("upload-text")]
-    public async Task<IResult> UploadText(IFormFile text)
+    [HttpPost("upload-file")]
+    public async Task<IResult> UploadFile(IFormFile file)
     {
-        var result = await _uploadFileService.SaveUploadFile(text);
+        var result = await _uploadFileService.SaveUploadFile(file);
+        return result;
+    }
+
+    [HttpPost("upload-text")]
+    public async Task<IResult> UploadText(string text)
+    {
+        var result = await _uploadFileService.SaveUploadText(text);
+
         return result;
     }
 
