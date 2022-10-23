@@ -2,7 +2,7 @@ using System.Collections.ObjectModel;
 using System.Text;
 using SearchDuplicatesText.Models;
 
-namespace SearchDuplicatesText.Services.PlagiarismCheckService.AvramenkoMethod;
+namespace SearchDuplicatesText.Services.PlagiarismCheckService.ExpMethod;
 
 public class AvramenkoMethod : IPlagiarismMethod
 {

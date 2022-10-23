@@ -1,3 +1,7 @@
 .buttons {
     margin-top: 26px;
 }
+
+.input-text{
+    max-height: 550px;
+}
