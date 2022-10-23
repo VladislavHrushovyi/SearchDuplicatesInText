@@ -1,8 +1,10 @@
 using System.Collections.Concurrent;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Text;
 using SearchDuplicatesText.DataRepositories;
 using SearchDuplicatesText.Models;
+using SearchDuplicatesText.Models.DataBase;
 using SearchDuplicatesText.Services.MakeDataForMethodsService;
 
 namespace SearchDuplicatesText.Services.PlagiarismCheckService.ShingleMethod;
@@ -18,9 +20,9 @@ public class ShingleMethod : IPlagiarismMethod
         _convertText = convertText;
     }
 
-    public async Task<List<MethodResult>> StartMethod(List<string> dataForMethod)
+    public async Task<List<MethodResult>> StartMethod(ReadOnlyCollection<string> dataForMethod)
     {
-        var shingleFiles = await _fileRepository.GetAllShingleFile();
+        var shingleFiles = await _fileRepository.GetFiles<ShingleFile>();
         var result = new BlockingCollection<MethodResult>();
         var watch = new Stopwatch();
         watch.Start();
@@ -41,12 +43,11 @@ public class ShingleMethod : IPlagiarismMethod
         watch.Stop();
         var ts = watch.Elapsed;
 
-        var elapsedTime = $"{ts.Hours:00}:{ts.Minutes:00}:{ts.Seconds:00}.{ts.Milliseconds / 10:00}";
-        Console.WriteLine("RunTime " + elapsedTime);
+        Console.WriteLine("RunTime " + ts);
         return result.ToList();
     }
 
-    public async Task<List<string>> GetPreparedData(StringBuilder text)
+    public async Task<ReadOnlyCollection<string>> GetPreparedData(StringBuilder text)
     {
         return await _convertText.GetShinglesHash(text);
     }

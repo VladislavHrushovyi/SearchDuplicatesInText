@@ -1,3 +1,4 @@
+using System.Text;
 using SearchDuplicatesText.Services.FileService;
 
 namespace SearchDuplicatesText.Services.PlagiarismCheckService;
@@ -11,12 +12,33 @@ public class PlagiarismCheckService
         _fileHandler = fileHandler;
     }
 
-    public async Task<IResult> CheckPlagiarism<T>(IFormFile file, T method) where T : IPlagiarismMethod
+    public async Task<IResult> CheckPlagiarismByFile(IFormFile file, IPlagiarismMethod method) 
     {
         var fileReader = await _fileHandler.GetFileReader(file);
         var dataFromFile = await _fileHandler.GetNewFileData(fileReader);
-        var shingles = await method.GetPreparedData(dataFromFile);
-        var resultMethod = await method.StartMethod(shingles);
+
+        return await StartMethod(dataFromFile, method);
+        // var preparedData = await method.GetPreparedData(dataFromFile);
+        // var resultMethod = await method.StartMethod(preparedData);
+        //
+        // return Results.Json(
+        //     new
+        //     {
+        //         resultMethod, resultMethod.Count
+        //     });
+    }
+
+    public async Task<IResult> CheckPlagiarismByText(string text, IPlagiarismMethod method)
+    {
+        var clearText = await _fileHandler.ClearText(new StringBuilder().Append(text));
+
+        return await StartMethod(clearText, method);
+    }
+
+    private async Task<IResult> StartMethod(StringBuilder text, IPlagiarismMethod method)
+    {
+        var preparedData = await method.GetPreparedData(text);
+        var resultMethod = await method.StartMethod(preparedData);
 
         return Results.Json(
             new

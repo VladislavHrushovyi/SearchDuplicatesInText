@@ -1,6 +1,7 @@
+using System.Text;
 using Microsoft.AspNetCore.Mvc;
 using SearchDuplicatesText.Services.PlagiarismCheckService;
-using SearchDuplicatesText.Services.PlagiarismCheckService.AvramenkoMethod;
+using SearchDuplicatesText.Services.PlagiarismCheckService.ExpMethod;
 using SearchDuplicatesText.Services.PlagiarismCheckService.NgramMethod;
 using SearchDuplicatesText.Services.PlagiarismCheckService.ShingleMethod;
 
@@ -13,32 +14,51 @@ public class CheckDuplicateController : ControllerBase
     private readonly PlagiarismCheckService _plagiarismCheck;
     private readonly ShingleMethod _shingleMethod;
     private readonly NgramMethod _ngramMethod;
-    private readonly AvramenkoMethod _avramenkoMethod;
+    private readonly ExpMethod _expMethod;
 
-    public CheckDuplicateController(PlagiarismCheckService plagiarismCheck, ShingleMethod shingleMethod, AvramenkoMethod avramenkoMethod, NgramMethod ngramMethod)
+    public CheckDuplicateController(PlagiarismCheckService plagiarismCheck, ShingleMethod shingleMethod, ExpMethod expMethod, NgramMethod ngramMethod)
     {
         _plagiarismCheck = plagiarismCheck;
         _shingleMethod = shingleMethod;
-        _avramenkoMethod = avramenkoMethod;
+        _expMethod = expMethod;
         _ngramMethod = ngramMethod;
     }
 
-    [HttpPost("shingle-check")]
-    public async Task<IResult> ShingleCheck(IFormFile file)
+    [HttpPost("file/shingle-check")]
+    public async Task<IResult> ShingleCheckFile(IFormFile data)
     {
-        var result = await _plagiarismCheck.CheckPlagiarism(file, _shingleMethod);
+        var result = await _plagiarismCheck.CheckPlagiarismByFile(data, _shingleMethod);
         return result;
     }
-    [HttpPost("ngram-check")]
-    public async Task<IResult> NgramCheck(IFormFile file)
+    
+    [HttpPost("text/shingle-check")]
+    public async Task<IResult> ShingleCheckText([FromForm] String data)
     {
-        var result = await _plagiarismCheck.CheckPlagiarism(file, _ngramMethod);
+        var result = await _plagiarismCheck.CheckPlagiarismByText(data, _shingleMethod);
         return result;
     }
-    [HttpPost("avramenko-check")]
-    public async Task<IResult> AvramenkoCheck(IFormFile file)
+    [HttpPost("file/ngram-check")]
+    public async Task<IResult> NgramCheckFile(IFormFile data)
     {
-        var result = await _plagiarismCheck.CheckPlagiarism(file, _avramenkoMethod);
+        var result = await _plagiarismCheck.CheckPlagiarismByFile(data, _ngramMethod);
+        return result;
+    }
+    [HttpPost("text/ngram-check")]
+    public async Task<IResult> NgramCheckText([FromForm]String data)
+    {
+        var result = await _plagiarismCheck.CheckPlagiarismByText(data, _ngramMethod);
+        return result;
+    }
+    [HttpPost("file/exp-check")]
+    public async Task<IResult> ExpCheckFile(IFormFile data)
+    {
+        var result = await _plagiarismCheck.CheckPlagiarismByFile(data, _expMethod);
+        return result;
+    }
+    [HttpPost("text/exp-check")]
+    public async Task<IResult> ExpCheckText([FromForm]String data)
+    {
+        var result = await _plagiarismCheck.CheckPlagiarismByText(data, _expMethod);
         return result;
     }
 }
