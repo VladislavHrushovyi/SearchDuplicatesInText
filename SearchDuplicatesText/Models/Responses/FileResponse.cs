@@ -1,6 +1,6 @@
 using SearchDuplicatesText.Models.DataBase;
 
-namespace SearchDuplicatesText.Models;
+namespace SearchDuplicatesText.Models.Responses;
 
 public sealed class FileResponse
 {

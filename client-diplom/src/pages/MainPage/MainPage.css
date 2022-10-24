@@ -5,3 +5,7 @@
 .input-text{
     max-height: 550px;
 }
+
+.result {
+    font-size: 1.5rem;
+}

@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using SearchDuplicatesText.Models;
 using SearchDuplicatesText.Models.DataBase;
+using SearchDuplicatesText.Models.Responses;
 
 namespace SearchDuplicatesText.DataRepositories;
 
@@ -24,31 +25,6 @@ public class FileRepository : BaseRepository
 
         return await files.ToListAsync();
     }
-    // public async Task<ShingleFile> AddShingleFile(ShingleFile shingleFile)
-    // {
-    //     var shingleFileEntity = await DbContext.SingleFiles.AddAsync(shingleFile);
-    //     await DbContext.SaveChangesAsync();
-    //
-    //     return shingleFileEntity.Entity;
-    // }
-    //
-    // public async Task<List<ShingleFile>> GetAllShingleFile()
-    // {
-    //     return await DbContext.SingleFiles.ToListAsync();
-    // }
-    //
-    // public async Task<List<NgramFile>> GetAllNgramFiles()
-    // {
-    //     return await DbContext.NgramFiles.ToListAsync();
-    // }
-    //
-    // public async Task<NgramFile> AddNgramFile(NgramFile ngramFile)
-    // {
-    //     var ngramFileEntity = await DbContext.NgramFiles.AddAsync(ngramFile);
-    //     await DbContext.SaveChangesAsync();
-    //     
-    //     return ngramFileEntity.Entity;
-    // }
 
     public async Task<FileResponse> Delete(string nameFile)
     {

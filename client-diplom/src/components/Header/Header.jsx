@@ -8,7 +8,19 @@ import { Link } from "react-router-dom";
 export const Header = () => {
 
     const { Header } = Layout;
-    const menuItems = ["Головна", "Звіт", "Адмінка"]
+    const menuItems = [
+        {
+            name:"Головна",
+            to: "main"
+        }, 
+        {
+            name:"Звіт",
+            to: "report"
+        }, 
+        {
+            name: "Адмінка",
+            to: "admin"
+    }]
 
     return (
         <>
@@ -19,7 +31,7 @@ export const Header = () => {
                     {
                         menuItems.map((item, index) => {
                             return <Menu.Item key={index}>
-                                        <Link to="main" >{item}</Link>
+                                        <Link to={item.to} >{item.name}</Link>
                                     </Menu.Item>
                         })
                     }

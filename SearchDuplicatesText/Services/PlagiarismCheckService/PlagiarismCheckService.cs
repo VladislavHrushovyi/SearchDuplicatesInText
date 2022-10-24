@@ -1,4 +1,5 @@
 using System.Text;
+using SearchDuplicatesText.Models.Responses;
 using SearchDuplicatesText.Services.FileService;
 
 namespace SearchDuplicatesText.Services.PlagiarismCheckService;
@@ -18,14 +19,6 @@ public class PlagiarismCheckService
         var dataFromFile = await _fileHandler.GetNewFileData(fileReader);
 
         return await StartMethod(dataFromFile, method);
-        // var preparedData = await method.GetPreparedData(dataFromFile);
-        // var resultMethod = await method.StartMethod(preparedData);
-        //
-        // return Results.Json(
-        //     new
-        //     {
-        //         resultMethod, resultMethod.Count
-        //     });
     }
 
     public async Task<IResult> CheckPlagiarismByText(string text, IPlagiarismMethod method)
@@ -40,10 +33,6 @@ public class PlagiarismCheckService
         var preparedData = await method.GetPreparedData(text);
         var resultMethod = await method.StartMethod(preparedData);
 
-        return Results.Json(
-            new
-            {
-                resultMethod, resultMethod.Count
-            });
+        return Results.Ok(new MethodResultResponse(resultMethod));
     }
 }
