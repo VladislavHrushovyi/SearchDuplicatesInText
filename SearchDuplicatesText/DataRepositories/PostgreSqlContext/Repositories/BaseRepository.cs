@@ -1,4 +1,4 @@
-namespace SearchDuplicatesText.DataRepositories;
+namespace SearchDuplicatesText.DataRepositories.PostgreSqlContext.Repositories;
 
 public abstract class BaseRepository
 {

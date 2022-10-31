@@ -35,10 +35,6 @@ public class FileHandler
 
         foreach (var s in textFromUpload!.Split(" "))
         {
-            // if (s == " ")
-            // {
-            //     continue;
-            // }
             if (!await _wordNormalizer.IsWrongWord(s) && s != " ")
             {
                 filteredText.Append(s + " ");

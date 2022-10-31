@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using SearchDuplicatesText.Models.DataBase;
 
-namespace SearchDuplicatesText.DataRepositories;
+namespace SearchDuplicatesText.DataRepositories.PostgreSqlContext;
 
 public class AppDbContext : DbContext
 {
@@ -10,7 +10,7 @@ public class AppDbContext : DbContext
 
     public DbSet<ExpFile> ExpFiles { get; set; }
 
-    public AppDbContext(DbContextOptions opt) : base(opt)
+    public AppDbContext(DbContextOptions<AppDbContext> opt) : base(opt)
     {
         
     }

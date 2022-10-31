@@ -1,9 +1,8 @@
 using Microsoft.EntityFrameworkCore;
-using SearchDuplicatesText.Models;
 using SearchDuplicatesText.Models.DataBase;
 using SearchDuplicatesText.Models.Responses;
 
-namespace SearchDuplicatesText.DataRepositories;
+namespace SearchDuplicatesText.DataRepositories.PostgreSqlContext.Repositories;
 
 public class FileRepository : BaseRepository
 {

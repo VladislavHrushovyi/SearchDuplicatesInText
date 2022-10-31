@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using System.Text;
 using SearchDuplicatesText.DataRepositories;
+using SearchDuplicatesText.DataRepositories.PostgreSqlContext.Repositories;
 using SearchDuplicatesText.Models.DataBase;
 
 namespace SearchDuplicatesText.Services.MakeDataForMethodsService;

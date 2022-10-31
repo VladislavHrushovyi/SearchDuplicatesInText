@@ -3,32 +3,40 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Text;
 using SearchDuplicatesText.DataRepositories;
+using SearchDuplicatesText.DataRepositories.InMemoryContext.Repositories.ProgressRepository;
+using SearchDuplicatesText.DataRepositories.PostgreSqlContext.Repositories;
 using SearchDuplicatesText.Models;
 using SearchDuplicatesText.Models.DataBase;
 using SearchDuplicatesText.Services.MakeDataForMethodsService;
 
 namespace SearchDuplicatesText.Services.PlagiarismCheckService.ExpMethod;
 
-public class ExpMethod : IPlagiarismMethod
+public class ExpMethod : BaseMethod, IPlagiarismMethod
 {
-    private readonly FileRepository _fileRepository;
     private readonly ConvertTextToDataMethod _convertText;
 
-    public ExpMethod(FileRepository fileRepository, ConvertTextToDataMethod convertText)
+    public ExpMethod(FileRepository fileRepository,IProgressRepository progressRepository,ConvertTextToDataMethod convertText)
+        : base(fileRepository, progressRepository)
     {
-        _fileRepository = fileRepository;
         _convertText = convertText;
     }
 
-    public async Task<List<MethodResult>> StartMethod(ReadOnlyCollection<string> dataForMethod)
+    public async Task<List<MethodResult>> StartMethod(ReadOnlyCollection<string> dataForMethod, string progressName)
     {
         var expFiles = await _fileRepository.GetFiles<ExpFile>();
         using var result = new BlockingCollection<MethodResult>();
         
         var watch = new Stopwatch();
+        var enumerable = expFiles as ExpFile[] ?? expFiles.ToArray();
+        var progress = await _progressRepository.AddProgress(new ProgressModel()
+        {
+            NameOfProgress = progressName,
+            AllItems = enumerable.Count(),
+            Progress = 0
+        });
         watch.Start();
 
-        await Parallel.ForEachAsync(expFiles, 
+        await Parallel.ForEachAsync(enumerable, 
             new ParallelOptions(){MaxDegreeOfParallelism = Environment.ProcessorCount},
             async (file, token) =>
             {
@@ -42,12 +50,15 @@ public class ExpMethod : IPlagiarismMethod
                         amountSamePart++;
                     }
                 }
-                
+                await Task.Delay(new Random().Next(1000, 20000), token);
                 result.Add(new MethodResult()
                 {
                     NameFile = file.Name,
                     Percent = (amountSamePart * 100d) / (dataForMethod.Count / itemsInPart)
                 });
+                progress.Progress = result.Count;
+                await _progressRepository.UpdateProgress(progress);
+                Console.WriteLine($"Do {progress.Progress} in {progress.AllItems}");
             });
         
         watch.Stop();

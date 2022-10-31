@@ -1,7 +1,7 @@
 import './App.css';
 import 'antd/dist/antd.min.css';
 import { Header } from './components/Header/Header';
-import { Layout, Space } from 'antd';
+import { Layout } from 'antd';
 import { Content } from 'antd/lib/layout/layout';
 import { Routes, Route } from "react-router-dom";
 import { MainPage } from './pages/MainPage/MainPage';

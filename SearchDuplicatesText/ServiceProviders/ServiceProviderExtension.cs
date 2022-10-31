@@ -1,4 +1,5 @@
-using SearchDuplicatesText.DataRepositories;
+using SearchDuplicatesText.DataRepositories.InMemoryContext.Repositories.ProgressRepository;
+using SearchDuplicatesText.DataRepositories.PostgreSqlContext.Repositories;
 using SearchDuplicatesText.Services.FileService;
 using SearchDuplicatesText.Services.MakeDataForMethodsService;
 using SearchDuplicatesText.Services.PlagiarismCheckService;
@@ -22,6 +23,7 @@ public static class ServiceProviderExtension
         services.AddScoped<ShingleMethod>();
         services.AddScoped<NgramMethod>();
         services.AddScoped<ExpMethod>();
+        services.AddScoped<IProgressRepository, ProgressRepository>();
         services.AddControllers();
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
