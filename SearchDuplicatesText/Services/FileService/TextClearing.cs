@@ -10,7 +10,7 @@ public class TextClearing
         //@"(?i)[^А-ЯЁІЇA-Z\s]"
         return await Task.Run( () =>
         {
-            text.Replace("\t", "").Replace("\r","").Replace("\n", "");
+            text.Replace("\t", "").Replace("\r","").Replace("\n", "").Replace("    ", "").Replace("+","");
             return Regex.Replace(text.ToString(), @"(?i)[^А-ЯЁІЇЄ\s+]", "").ToLower();
         });
     }
