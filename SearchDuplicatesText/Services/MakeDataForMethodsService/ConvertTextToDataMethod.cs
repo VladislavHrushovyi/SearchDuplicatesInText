@@ -102,7 +102,8 @@ public class ConvertTextToDataMethod
     private async IAsyncEnumerable<string> CreateNgrams(StringBuilder text, int ngramCount = 20)
     {
         text.Replace(" ", "");
-        
+        if (text.Length < ngramCount) yield return  text.ToString();
+
         for (int i = 0; i < text.Length - ngramCount; i++)
         {
             yield return text.ToString(i, ngramCount);

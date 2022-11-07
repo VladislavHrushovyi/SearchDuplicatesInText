@@ -6,6 +6,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataParser", "DataParser\Da
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{C0BF0C45-9D72-4AA6-8F76-404ADB8BDE64}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Auth", "Auth\Auth.csproj", "{391AE283-3A9E-45D3-A9FA-CE4BFF825A62}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +26,9 @@ Global
 		{C0BF0C45-9D72-4AA6-8F76-404ADB8BDE64}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C0BF0C45-9D72-4AA6-8F76-404ADB8BDE64}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C0BF0C45-9D72-4AA6-8F76-404ADB8BDE64}.Release|Any CPU.Build.0 = Release|Any CPU
+		{391AE283-3A9E-45D3-A9FA-CE4BFF825A62}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{391AE283-3A9E-45D3-A9FA-CE4BFF825A62}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{391AE283-3A9E-45D3-A9FA-CE4BFF825A62}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{391AE283-3A9E-45D3-A9FA-CE4BFF825A62}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
