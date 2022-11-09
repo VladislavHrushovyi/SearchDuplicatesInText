@@ -8,6 +8,7 @@ import { MainPage } from './pages/MainPage/MainPage';
 import { ReportPage } from './pages/ReportPage/ReportPage';
 import { Provider } from 'react-redux';
 import  store  from "./redux/store"
+import { LoginPage } from './pages/LoginPage/LoginPage';
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
           <Route path='/' element={<MainPage />} />
           <Route path='main' element={<MainPage />}/>
           <Route path='report' element={<ReportPage />}/>
+          <Route path='login' element={<LoginPage />}/>
         </Routes>
       </Content>
     </Layout>

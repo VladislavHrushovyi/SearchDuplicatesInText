@@ -55,6 +55,7 @@ public class CheckDuplicateController : ControllerBase
     [HttpPost("file/exp-check")]
     public async Task<IResult> ExpCheckFile([FromForm] IFormFile data,[FromForm] string progressName)
     {
+        var user = this.HttpContext.Items["User"];
         var result = await _plagiarismCheck.CheckPlagiarismByFile(data, _expMethod, progressName);
         return result;
     }

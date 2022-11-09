@@ -1,3 +1,4 @@
+using SearchDuplicatesText.Middlewares;
 using SearchDuplicatesText.ServiceProviders;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,9 +15,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseCors(cors => cors.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
 app.UseHttpsRedirection();
-
-app.UseAuthorization();
-
+app.UseMiddlewares();
 app.MapControllers();
 
 app.Run();

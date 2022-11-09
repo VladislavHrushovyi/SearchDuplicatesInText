@@ -25,8 +25,9 @@ export const ReportPage = () => {
 
     return (
         <>
+        <div className="site-layout-content">
             <Col gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }} style={{ marginTop: "25px" }}>
-                    <div className="site-layout-content">
+                    
                         <List
                             header={<div>Header</div>}
                             footer={<Pagination
@@ -49,8 +50,8 @@ export const ReportPage = () => {
                                 </List.Item>
                             )}
                         />
-                    </div>
             </Col>
+            </div>
         </>
     )
 } 

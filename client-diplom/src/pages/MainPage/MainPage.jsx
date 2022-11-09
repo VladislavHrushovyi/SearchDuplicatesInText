@@ -28,31 +28,41 @@ export const MainPage = () => {
     const selectHook = useSelectHook("Метод N-грам", "ngram-check")
     const dispatch = useDispatch()
     const reportSelector = useSelector(r => r.report)
+    const user = useSelector(r => r.user)
 
     const onClickHandle = async () => {
         setLoading(true)
         setProgressComplete(0)
+        console.log("Bearer " + user.token)
         const interval = setInterval(async () => {
-            await axios.get(`http://localhost:5229/Progress/${progressName}`)
+            await axios.get(`http://localhost:5229/Progress/${progressName}`,{
+                headers:{
+                    "Authorization": "Bearer " + user.token,
+                }
+            })
             .then(res => {
-                const data = res.data.value
+                console.log(res.data.progress)
+                const data = res.data
                 setProgressComplete((data.progress / data.allItems) * 100)
-                if(data.progress === data.allItems) return
+                if(data.progress === data.allItems){
+                    clearInterval(interval)
+                    return
+                }
             })
         }, 500)
         const progressName = Date.now().toString()
         if (uploadHook.fileList.length !== 0 && uploadHook.fileList[0].status !== "removed") {
             const file = uploadHook.fileList[0];
-            postFile(`/CheckDuplicate/file/${selectHook.value}`, file.originFileObj, progressName).then(res => {
-                dispatch(setReport(res.data.value))
+            postFile(`/CheckDuplicate/file/${selectHook.value}`, file.originFileObj, progressName, user.token).then(res => {
+                dispatch(setReport(res.data))
                 setLoading(false)
                 openNotificationWithIcon('success', { message: "Успішно", description: "Перевірка пройшла успішно" })
                 clearInterval(interval)
                 return
             })
         } else if (textAreaHook.value !== "") {
-            postFile(`/CheckDuplicate/text/${selectHook.value}`, textAreaHook.value, progressName).then(res => {
-                dispatch(setReport(res.data.value))
+            postFile(`/CheckDuplicate/text/${selectHook.value}`, textAreaHook.value, progressName, user.token).then(res => {
+                dispatch(setReport(res.data))
                 setLoading(false)
                 openNotificationWithIcon('success', { message: "Успішно", description: "Перевірка пройшла успішно" })
                 clearInterval(interval)
