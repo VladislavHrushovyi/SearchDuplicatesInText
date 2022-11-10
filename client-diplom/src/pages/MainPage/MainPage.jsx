@@ -14,7 +14,7 @@ import Text from 'antd/lib/typography/Text';
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
 import { openNotificationWithIcon } from '../../utils/notification';
-import axios from 'axios';
+import { getProgressChecking } from '../../utils/getCheckingProgress';
 
 
 
@@ -31,26 +31,17 @@ export const MainPage = () => {
     const user = useSelector(r => r.user)
 
     const onClickHandle = async () => {
+        console.log(user)
+        if(!user.islogged){
+            openNotificationWithIcon("warning", {message: "Авторизуйтеся", description:"Увійдіть до системи для того щоб користуватися можливостями сервісу"})
+            return
+        }
         setLoading(true)
         setProgressComplete(0)
-        console.log("Bearer " + user.token)
-        const interval = setInterval(async () => {
-            await axios.get(`http://localhost:5229/Progress/${progressName}`,{
-                headers:{
-                    "Authorization": "Bearer " + user.token,
-                }
-            })
-            .then(res => {
-                console.log(res.data.progress)
-                const data = res.data
-                setProgressComplete((data.progress / data.allItems) * 100)
-                if(data.progress === data.allItems){
-                    clearInterval(interval)
-                    return
-                }
-            })
-        }, 500)
         const progressName = Date.now().toString()
+
+        const interval = getProgressChecking(progressName, user.token, setProgressComplete)
+
         if (uploadHook.fileList.length !== 0 && uploadHook.fileList[0].status !== "removed") {
             const file = uploadHook.fileList[0];
             postFile(`/CheckDuplicate/file/${selectHook.value}`, file.originFileObj, progressName, user.token).then(res => {
