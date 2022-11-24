@@ -19,7 +19,7 @@ public class ProgressController : ControllerBase
     public async Task<IResult> GetProgress(string name)
     {
         Console.WriteLine(name);
-        var result = await _progressRepository.GetProgressByName(name);
+        var result = await _progressRepository.GetProgressByName(name).ConfigureAwait(false);
         if(result == default) return Results.Ok(new ProgressModel());
         return Results.Ok(result);
     }

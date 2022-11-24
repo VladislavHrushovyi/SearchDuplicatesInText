@@ -50,14 +50,14 @@ public class ExpMethod : BaseMethod, IPlagiarismMethod
                         amountSamePart++;
                     }
                 }
-                await Task.Delay(new Random().Next(1000, 20000), token);
+                await Task.Delay(new Random().Next(1000, 10000), token);
                 result.Add(new MethodResult()
                 {
                     NameFile = file.Name,
                     Percent = (amountSamePart * 100d) / (dataForMethod.Count / itemsInPart)
                 });
                 progress.Progress = result.Count;
-                await _progressRepository.UpdateProgress(progress);
+                await _progressRepository.UpdateProgress(progress).ConfigureAwait(false);
                 Console.WriteLine($"Do {progress.Progress} in {progress.AllItems}");
             });
         

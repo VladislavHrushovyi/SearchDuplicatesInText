@@ -94,7 +94,7 @@ export const MainPage = () => {
                                         <Text className='result' type={parseInt(reportSelector.maxDuplicate) < 25 ?
                                             "success" : parseInt(reportSelector.maxDuplicate) > 25 && parseInt(reportSelector.maxDuplicate) < 50
                                                 ? "warning"
-                                                : "danger"} >Зхожість {parseInt(reportSelector.maxDuplicate)}%</Text>
+                                                : "danger"} >Схожість {parseInt(reportSelector.maxDuplicate)}%</Text>
                                     </Col>
                                     <Col className="gutter-row" span={4}>
                                         <Link className='result' to="/report">Детальніше</Link>

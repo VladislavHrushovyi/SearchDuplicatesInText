@@ -43,7 +43,7 @@ export const ReportPage = () => {
                                 <List.Item >
                                     <Typography.Text mark >[ФАЙЛ]</Typography.Text> {item.nameFile}
 
-                                    <Typography.Text style={{marginLeft:'25px'}} mark>[ЗХОЖІСТЬ]</Typography.Text> <Typography.Text  type={parseInt(item.percent) < 25 ?
+                                    <Typography.Text style={{marginLeft:'25px'}} mark>[СХОЖІСТЬ]</Typography.Text> <Typography.Text  type={parseInt(item.percent) < 25 ?
                                         "success" : parseInt(item.percent) > 25 && parseInt(item.percent) < 50
                                             ? "warning"
                                             : "danger"} >{parseInt(item.percent)}%</Typography.Text>
