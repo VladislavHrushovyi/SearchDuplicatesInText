@@ -45,11 +45,14 @@ public class ShingleMethod : BaseMethod, IPlagiarismMethod
                     : (Convert.ToDouble(commonShingleCount) / Convert.ToDouble(compareFile.Length)) * 100
         
             };
-            await Task.Delay(new Random().Next(1000, 10000), token);
-            result.Add(methodResult, token);
-            progress.Progress = result.Count();
-            await _progressRepository.UpdateProgress(progress).ConfigureAwait(false);
-            Console.WriteLine($"Do {progress.Progress} in {progress.AllItems}");
+            await Task.Delay(StaticData.GetRandomDelay(), token).ContinueWith(async (r) =>
+            {
+                result.Add(methodResult, token);
+                progress.Progress = result.Count;
+                await _progressRepository.UpdateProgress(progress).ConfigureAwait(false);
+                Console.WriteLine($"Do {progress.Progress} in {progress.AllItems}");
+            }, token);
+            
         });
         watch.Stop();
         var ts = watch.Elapsed;

@@ -40,25 +40,21 @@ public class ExpMethod : BaseMethod, IPlagiarismMethod
             new ParallelOptions(){MaxDegreeOfParallelism = Environment.ProcessorCount},
             async (file, token) =>
             {
-                var itemsInPart = 5d;
-                var amountSamePart = 0;
+                var itemsInPart = StaticData.ExpPart;
                 var dataFromFile = await File.ReadAllLinesAsync($"./Files/ExpFiles/{file.Name}", token);
-                foreach (var partOfFile in dataFromFile.Chunk((int)itemsInPart))
+                double expMatch = CalculateSamePart(dataForMethod, dataFromFile, (int)itemsInPart);
+                double percent = (expMatch ) / (dataForMethod.Count - itemsInPart + 1);
+                await Task.Delay(StaticData.GetRandomDelay(), token).ContinueWith(async (r) =>
                 {
-                    if (IsSubarray(dataForMethod, partOfFile, dataForMethod.Count, partOfFile.Length))
+                    result.Add(new MethodResult()
                     {
-                        amountSamePart++;
-                    }
-                }
-                await Task.Delay(new Random().Next(1000, 10000), token);
-                result.Add(new MethodResult()
-                {
-                    NameFile = file.Name,
-                    Percent = (amountSamePart * 100d) / (dataForMethod.Count / itemsInPart)
-                });
-                progress.Progress = result.Count;
-                await _progressRepository.UpdateProgress(progress).ConfigureAwait(false);
-                Console.WriteLine($"Do {progress.Progress} in {progress.AllItems}");
+                        NameFile = file.Name,
+                        Percent = percent * 100
+                    }, token);
+                    Console.WriteLine($"Do {progress.Progress} in {progress.AllItems}");
+                    progress.Progress = result.Count;
+                    await _progressRepository.UpdateProgress(progress);
+                }, token);
             });
         
         watch.Stop();
@@ -68,27 +64,25 @@ public class ExpMethod : BaseMethod, IPlagiarismMethod
 
         return result.ToList();
     }
-
-    private bool IsSubarray(ReadOnlyCollection<string> A, string[] B, int n, int m)
+    
+    private int CalculateSamePart(IEnumerable<string> firstFile, IEnumerable<string> secondFile, int expPart)
     {
-        int i = 0, j = 0;
-        while (i < n && j < m)
+        int sameCount = 0;
+        for (int ch1 = 0; ch1 < firstFile.Count() - expPart + 1; ch1++)
         {
-            if (A[i] == B[j])
+            var part1 = firstFile.Skip(ch1).Take(expPart);
+            for (int ch2 = 0; ch2 < secondFile.Count() - expPart + 1; ch2++)
             {
-      
-                i++;
-                j++;
-                if (j == m)
-                    return true;
-            }
-            else
-            {
-                i = i - j + 1;
-                j = 0;
+                var part2 = secondFile.Skip(ch2).Take(expPart);
+                if (part1.SequenceEqual(part2))
+                {
+                    sameCount++;
+                    break;
+                }
             }
         }
-        return false;
+
+        return sameCount;
     }
 
     public async Task<ReadOnlyCollection<string>> GetPreparedData(StringBuilder text) => await _convertText.GetExps(text);

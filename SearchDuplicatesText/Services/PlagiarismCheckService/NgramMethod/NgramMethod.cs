@@ -41,16 +41,19 @@ public class NgramMethod : BaseMethod, IPlagiarismMethod
                 var ngramMatch1 = dataForMethod.Intersect(dataFromFile).Count();
                 var ngramMatch2 = dataFromFile.Intersect(dataForMethod).Count();
                 var percent = Convert.ToDouble(ngramMatch1 + ngramMatch2) / Convert.ToDouble(dataForMethod.Count + file.NumberOfNgram);
-                await Task.Delay(new Random().Next(2000, 10000), token);
-                var methodResult = new MethodResult()
+                await Task.Delay(StaticData.GetRandomDelay(), token).ContinueWith(async (r) =>
                 {
-                    NameFile = file.Name,
-                    Percent = percent * 100
-                };
-                result.Add(methodResult, token);
-                progress.Progress = result.Count;
-                await _progressRepository.UpdateProgress(progress).ConfigureAwait(false);
-                Console.WriteLine($"Do {progress.Progress} in {progress.AllItems}");
+                    var methodResult = new MethodResult()
+                    {
+                        NameFile = file.Name,
+                        Percent = percent * 100
+                    };
+                    result.Add(methodResult, token);
+                    progress.Progress = result.Count;
+                    await _progressRepository.UpdateProgress(progress);
+                    Console.WriteLine($"Do {progress.Progress} in {progress.AllItems}");
+                }, token);
+                
             });
         watch.Stop();
         var ts = watch.Elapsed;

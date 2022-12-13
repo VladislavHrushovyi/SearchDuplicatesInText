@@ -23,7 +23,7 @@ export const LoginForm = () => {
                     .then(res => {
                         const userData = res.data;
                         dispatch(SetUserInfo(userData))
-                        navigate("/a")
+                        navigate("/main")
                     })
                     .catch(function (error) {
                         openNotificationWithIcon("error", { message: "Упс", description: "Щось пішло не так" })

@@ -101,6 +101,7 @@ public class ConvertTextToDataMethod
 
     private async IAsyncEnumerable<string> CreateNgrams(StringBuilder text, int ngramCount = 20)
     {
+        ngramCount = StaticData.Ngram;
         text.Replace(" ", "");
         if (text.Length < ngramCount) yield return  text.ToString();
 
@@ -112,6 +113,7 @@ public class ConvertTextToDataMethod
 
     private async IAsyncEnumerable<string> CreateShingleHashes(StringBuilder text, int numberOfShingle = 3)
     {
+        numberOfShingle = StaticData.Shingle;
         var splitText = text.ToString().Split(" ");
         for (int i = 0; i < (splitText.Length - numberOfShingle); i++)
         {

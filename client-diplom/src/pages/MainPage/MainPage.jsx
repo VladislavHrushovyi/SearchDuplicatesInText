@@ -52,6 +52,7 @@ export const MainPage = () => {
                 return
             })
         } else if (textAreaHook.value !== "") {
+            console.log(textAreaHook.value)
             postFile(`/CheckDuplicate/text/${selectHook.value}`, textAreaHook.value, progressName, user.token).then(res => {
                 dispatch(setReport(res.data))
                 setLoading(false)
